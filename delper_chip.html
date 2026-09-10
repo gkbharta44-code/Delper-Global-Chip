@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DGHC Master Silicon Interface Specification</title>
+<style>
+  :root {
+    --bg: #0f1216;
+    --panel: #171b21;
+    --accent: #4fd1c5;
+    --accent-2: #f6ad55;
+    --text: #e6e9ee;
+    --muted: #9aa5b1;
+    --border: #2a2f38;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.doc-header {
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+  header.doc-header h1 {
+    font-size: 1.6rem;
+    margin: 0 0 8px;
+    color: var(--accent);
+  }
+  header.doc-header .meta {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-family: monospace;
+  }
+  section { margin-bottom: 40px; }
+  h2.section-title {
+    font-size: 1.15rem;
+    color: var(--accent-2);
+    border-left: 4px solid var(--accent-2);
+    padding-left: 12px;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  h3.doc-title {
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 3px double var(--border);
+    font-size: 1.3rem;
+    color: var(--accent);
+  }
+  h4 { color: var(--text); margin-bottom: 4px; }
+  p { margin: 0 0 14px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 0.92rem;
+    background: var(--panel);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #1f242c;
+    color: var(--accent-2);
+    font-weight: 600;
+  }
+  tr:nth-child(even) td { background: #14181e; }
+  ul, ol { padding-left: 22px; margin-bottom: 16px; }
+  li { margin-bottom: 6px; }
+  .callout {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 4px;
+    margin: 18px 0;
+  }
+  .diagram {
+    background: #0b0d10;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: "Courier New", monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    white-space: pre;
+    margin: 16px 0 24px;
+  }
+  .page-marker {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-family: monospace;
+    margin: 24px 0;
+    letter-spacing: 0.1em;
+  }
+  .clause { margin-bottom: 20px; }
+  .clause h4 { color: var(--accent-2); }
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+    padding-top: 20px;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  footer a { color: var(--accent); }
+  .fine-print {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc-header">
+  <h1>DELPER GLOBAL HOLDING COMPANY<br>Master Silicon Interface Specification</h1>
+  <div class="meta">
+    DOCUMENT REF: DGHC-SPEC-SILICON-2026-V9 &nbsp;//&nbsp; CLASSIFICATION: COMMERCIAL / INDUSTRY CONFIDENTIAL<br>
+    ISSUANCE DATE: September 10, 2026
+  </div>
+</header>
+
+<section>
+  <h2 class="section-title">Section I — Heterogeneous Silicon Architecture Overview</h2>
+  <p>To support the 21-year roadmap of the Delper Kindness Architecture (DKA) across 6.0 billion deployment nodes, Delper Global Holding Company (DGHC) implements a dual-silicon strategy. Rather than deploying a single monolithic processor across all nodes — which creates unsustainable thermal, power, and manufacturing yield bottlenecks — the architecture splits the workload into two distinct, domain-specific 3nm Gate-All-Around (GAA) ASICs:</p>
+  <ol>
+    <li><strong>THE DUCP-1 (CORE NEXUS):</strong> A high-performance, ultra-large-scale datacenter orchestration engine optimized for high-lane CXL bus scheduling, global transport hub routing, and multi-tenant edge execution.</li>
+    <li><strong>THE DECP-1 (EDGE TERMINAL):</strong> An ultra-low-power, highly optimized companion chip designed for local haptic terminal interfaces, sensor telemetry ingestion, and line-rate encryption.</li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="section-title">Section II — Technical Hardware Comprehensive Specifications</h2>
+  <p>Both silicon architectures share a common cryptographic root of trust and process design rules, but they split significantly in compute density, memory sizing, and thermal envelopes.</p>
+  <table>
+    <thead>
+      <tr><th>Hardware Parameter</th><th>Master Nexus Chip (DUCP-1)</th><th>Edge Companion Chip (DECP-1)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Fabrication Process Node</td><td>3nm GAA Nanosheet Lithography</td><td>3nm GAA Nanosheet Lithography</td></tr>
+      <tr><td>Target Die Size Area</td><td>~150 mm²</td><td>~35 mm²</td></tr>
+      <tr><td>Transistor Count</td><td>~280 Billion</td><td>~65 Billion</td></tr>
+      <tr><td>Compute Throughput</td><td>14,850 INT8 TOPS / 7,425 FP16 TFLOPS</td><td>450 INT8 TOPS / 225 FP16 TFLOPS</td></tr>
+      <tr><td>On-Die Memory Subsystem</td><td>2.5 GB Embedded SRAM / High-Density eDRAM</td><td>64 MB High-Speed Block SRAM</td></tr>
+      <tr><td>Thermal Design Power (TDP)</td><td>150W – 300W+ (Active / Sub-ambient Peltier)</td><td>5W – 15W (Passive / Ambient Air Conduction)</td></tr>
+      <tr><td>Target Deployment Volume</td><td>231,928 Units</td><td>6,000,000,000 Units</td></tr>
+    </tbody>
+  </table>
+  <div class="page-marker">Page 1 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Section III — Shared Hardware Security Enclaves</h2>
+  <p>To preserve the systemic security architecture of the DKA, both the DUCP-1 and DECP-1 must include identical hardwired hardware security primitives within their silicon layout:</p>
+  <div class="clause">
+    <h4>1. The Hardware-Level Execution Guard (SLA &amp; Safety Engine)</h4>
+    <ul>
+      <li><strong>Silicon Implementation:</strong> A physically isolated, cryptographically secure enclave that continuously polls the memory-mapped register <code>REG_COGNITIVE_COHERENCE</code>.</li>
+      <li><strong>Operational Function:</strong> Processes raw telemetry from local 1,024-channel dry-electrode EEG monitoring arrays. If the compiled Cognitive Load Index falls below a 0.88 threshold, the enclave fires a hardware interrupt that drops the execution bus enable signal within 14 microseconds, severing the execution pipeline cleanly at the silicon level.</li>
+    </ul>
+  </div>
+  <div class="clause">
+    <h4>2. Cryptographic Hardware Accelerators</h4>
+    <ul>
+      <li><strong>Silicon Implementation:</strong> Dedicated hardware blocks featuring hardwired cryptographic primitives for SHA-3, AES-GCM-256, and zero-knowledge proof (ZKP) generation.</li>
+      <li><strong>Operational Function:</strong> The DECP-1 utilizes these blocks to wrap and sign local user payloads at line-rate before satellite uplink transmission. The DUCP-1 utilizes them to parse, verify, and settle multi-tenant micro-transactions across transport hubs.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Section IV — Architectural Implementation &amp; Bus Coupling</h2>
+  <div class="diagram">
+┌────────────────────────────────────────────────────────────────┐
+│                 THE NETWORKING &amp; SILICON LAYER                  │
+└────────────────────────────────────────────────────────────────┘
+                    ↑ [ 10 Gbps LEO Satellite Uplink ]
+                    │
+   ┌─────────────────────────────┐   ┌──────────────────────────────┐
+   │   EDGE COMPANION (DECP-1)    │   │    MASTER NEXUS (DUCP-1)      │
+   ├─────────────────────────────┤   ├──────────────────────────────┤
+   │ - 5W to 15W Low-Power Core   │   │ - 150W+ High-Performance Mesh │
+   │ - 64 MB Local SRAM Cache     │   │ - 2.5 GB Superconducting Cache│
+   │ - 1,024-ch EEG Ingestion Port│   │ - Multi-Lane PCIe / CXL Fabric│
+   └─────────────────────────────┘   └──────────────────────────────┘
+                                              │ [ Ultra-High-Speed Bus ]
+                                              ↓
+                                  ┌──────────────────────────────┐
+                                  │    SUBORDINATE ACCELERATORS   │
+                                  ├──────────────────────────────┤
+                                  │ - NVIDIA / AMD Compute Block  │
+                                  │ - Sandboxed, Non-Boot Memory  │
+                                  └──────────────────────────────┘
+  </div>
+  <div class="page-marker">Page 2 of 20</div>
+
+  <h4>DUCP-1 Fabric Orchestration &amp; Sandbox Boot Sequence</h4>
+  <ol>
+    <li><strong>Root-of-Trust (RoT) Ignition:</strong> On power-on, the DUCP-1 boots from its immutable on-die ROM, verifying its local firmware stack. Subordinate commercial accelerators (NVIDIA/AMD) are locked in a hard reset state.</li>
+    <li><strong>Memory Sandboxing Isolation:</strong> The DUCP-1 configures its local Memory Protection Unit (MPU), carving out strict, isolated memory regions over the high-speed CXL bus to completely isolate the accelerators from the DUCP-1's private 2.5 GB L3 cache.</li>
+    <li><strong>Firmware Injection:</strong> The DUCP-1 validates the signature of the subordinate accelerator runtime microcode and injects it directly into the accelerator's volatile memory.</li>
+    <li><strong>Reset Release:</strong> The DUCP-1 drops the hardware reset lines, permitting the subordinate accelerators to boot strictly from the injected, validated memory block under continuous heartbeat monitoring.</li>
+  </ol>
+
+  <h4>DECP-1 Edge Transaction Pipeline</h4>
+  <ol>
+    <li><strong>Ingestion &amp; Validation:</strong> The DECP-1 ingests user inputs alongside real-time user cognitive health telemetry from the EEG cap.</li>
+    <li><strong>Local Packaging:</strong> The local hardware crypto-engine encrypts the payload using an AES-GCM-256 wrapper.</li>
+    <li><strong>LEO Satellite Relay:</strong> The packaged token is handed off to local phased-array antennas, hitting the LEO constellation via a 10 Gbps uplink, routing through inter-satellite laser links to find the target terrestrial tower.</li>
+    <li><strong>Hub Processing:</strong> The packet lands at one of the 705 Transport Hub Arrays, where a master DUCP-1 receives it into its 2.5 GB cache and hands off the heavy logistical data to its sandboxed subordinate accelerators for final settlement.</li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="section-title">Section V — Automated Design-for-Test (DFT) Unified Protocols</h2>
+  <p>Every wafer passing through automated test equipment (ATE) must clear the following consolidated validation suites. Any fault condition triggers an immediate automated line hold and quarantine protocol.</p>
+  <ul>
+    <li><strong>The 14-Microsecond Veto Latency Test (DUCP-1 &amp; DECP-1):</strong> ATE injects a fault state simulating user cognitive degradation. The on-die safety engine must execute a hardware interrupt, successfully dropping the execution bus enable signal within ≤14 microseconds, or the entire die is flagged as defective.</li>
+    <li><strong>Hardware Sandboxing Memory Protection Test (DUCP-1 Only):</strong> Fault-injection loops attempt an unauthorized write bypass from sandboxed execution pipelines into the root boot sector or primary 2.5 GB L3 cache registers. Wafers must physically reject the write cycle via hardwired MPU flags.</li>
+    <li><strong>High-Density EEG Interface Signal Matching (DECP-1 Only):</strong> Simulated 1,024-channel digital neural input streams are fed into the high-speed interface blocks. The inputs must resolve into stable, parity-checked data streams within 4 nanoseconds at the receiver layer.</li>
+  </ul>
+  <div class="page-marker">Page 3 of 20</div>
+
+  <h4>1. Step-by-Step Transaction Flow</h4>
+  <p>When a user initiates an enterprise transaction or operational change at an Edge User Terminal, data travels through a strict, hardware-verified pipeline to ensure it stays secure and maintains low latency.</p>
+  <div class="callout">
+    <strong>Step 1: Local Haptic Token Generation &amp; Biometric Baseline Check</strong>
+    <ul>
+      <li>The user signs an instruction at the Edge User Terminal.</li>
+      <li>The local DUCP-1 chip captures telemetry from the user's dry-electrode EEG array to verify their Cognitive Load Index is above the 0.88 safety threshold.</li>
+      <li>If cleared, the on-die cryptographic accelerator packages the payload with an AES-GCM-256 wrapper.</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <strong>Step 2: Terrestrial-to-LEO Uplink Interconnect</strong>
+    <ul>
+      <li>The Edge Terminal's phased-array transceiver beams the encrypted payload to the nearest visible LEO SmallSat Constellation Unit.</li>
+      <li>The packet enters the satellite network via a localized 10 Gbps uplink.</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <strong>Step 3: Inter-Satellite Laser Mesh Routing</strong>
+    <ul>
+      <li>The satellite receives the packet, buffers it in its own low-leakage SRAM cache grid, and reads the hardware routing headers.</li>
+      <li>The packet is routed across the space-based network using optical inter-satellite links (ISLs), keeping regional round-trip time (RTT) under 14 milliseconds.</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <strong>Step 4: Space-to-Ground Downlink Demodulation</strong>
+    <ul>
+      <li>The satellite constellation drops the packet down to the Civilisational Ground Grid via a high-speed downlink targeting a Terrestrial Telecommunication Tower or direct data center receiver.</li>
+      <li>Automatic gain control (AGC) isolates the signal from atmospheric noise or solar flare interference.</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <strong>Step 5: Transport Hub Ingress &amp; Security Isolation</strong>
+    <ul>
+      <li>The packet lands at one of the 705 Regional Transport Hub Arrays through a high-bandwidth fiber link.</li>
+      <li>The data hits the hub's master orchestration bank, passing directly into the 2.5 GB low-leakage L3 cache grid of a Master DUCP-1 chip.</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <strong>Step 6: Compute Acceleration &amp; Ledger Settlement</strong>
+    <ul>
+      <li>The Master DUCP-1 chip checks the packet's cryptographic signatures.</li>
+      <li>It passes the raw logistical workloads to the subordinate enterprise accelerators across a secure CXL fabric for bulk calculations.</li>
+      <li>The processed result drops back into the DUCP-1, which records the final transaction log across the distributed network.</li>
+    </ul>
+  </div>
+  <div class="page-marker">Page 4 of 20</div>
+
+  <h4>2. DUCP-1 to Subordinate Accelerator Boot Sequence</h4>
+  <p>To ensure subordinate commercial processors (like NVIDIA or AMD GPUs) cannot execute unauthorized code or modify their own firmware, the Master DUCP-1 governs the system boot sequence using a strict, hardware-enforced sandbox protocol.</p>
+  <div class="page-marker">Page 5 of 20</div>
+  <ul>
+    <li><strong>Phase 1 — Cold Power-On &amp; Internal RoT Validation:</strong> Power is applied to the compute rack. Subordinate accelerators are held in a hard RESET state by clamping their PCIe/CXL reset lines low. The DUCP-1 executes its internal boot sequence from an immutable on-die ROM, verifying its own firmware using hardwired cryptographic signatures.</li>
+    <li><strong>Phase 2 — Hardware-Sandboxed Memory Initialization:</strong> The DUCP-1 configures its local MPU, carving out strict, isolated memory regions over the high-speed CXL bus, completely blocking the subordinate accelerators from accessing the DUCP-1's private cache grid or security registers.</li>
+    <li><strong>Phase 3 — Accelerator Firmware Integrity Scan &amp; Injection:</strong> The DUCP-1 reads the official, signed runtime firmware for the subordinate accelerators from secure, read-only system storage, validates the signature, then injects the microcode into the accelerators' volatile memory over the bus.</li>
+    <li><strong>Phase 4 — Release of Reset &amp; Subordinate Execution:</strong> The DUCP-1 releases the physical hardware reset lines. Accelerators initialize only from the injected code and lack independent boot privileges.</li>
+    <li><strong>Phase 5 — Heartbeat Monitoring State:</strong> The accelerators process heavy computational data but remain dependent on the DUCP-1 for I/O and task allocation. Any forbidden memory access triggers the Hardware Watchdog, resetting the accelerator bus within microseconds.</li>
+  </ul>
+  <div class="page-marker">Page 6 of 20</div>
+</section>
+
+<h3 class="doc-title">DELPER GLOBAL HOLDING COMPANY — Enterprise Infrastructure Operational Master Blueprint</h3>
+<div class="meta">DOCUMENT REF: DGHC-EMP-GLOBAL-2026-V10 &nbsp;//&nbsp; CLASSIFICATION: COMMERCIAL / INDUSTRY CONFIDENTIAL<br>EFFECTIVE DATE: September 10, 2026</div>
+
+<section>
+  <h2 class="section-title">Section I — Governance Architecture &amp; the Triple-Tier System</h2>
+  <p>To execute the Delper Kindness Architecture (DKA) and the underlying Delper Business Process (DBP) across 235 countries and territories, Delper Global Holding Company establishes a rigid, triple-tier organizational structure. This operational model separates ownership governance, prime infrastructure implementation, and planetary-scale software automation into distinct, contractually bound layers:</p>
+
+  <div class="diagram">
+┌────────────────────────────────────────────────────────────────┐
+│         DELPER GLOBAL HOLDING COMPANY (THE OWNER)               │
+└────────────────────────────────────────────────────────────────┘
+                    │ [ Direct Mandate Interface ]
+                    ↓
+┌────────────────────────────────────────────────────────────────┐
+│   MINE BRAT PVT LIMITED (THE OWNER'S ENGINEER / SPOC)            │
+│   - Controls the USD 2.07B Seed Capital Tranches & Sign-offs     │
+│   - Holds Final Legal Veto on Samsung 3nm Mask Releases          │
+│     & HCLTech ASL ATE Testing Verification Logs                 │
+│   - Audits the 36 Ad Platforms & 3-Member Family KYC Limits      │
+└────────────────────────────────────────────────────────────────┘
+                    │ [ Strategic Subcontract Fabric ]
+                    ↓
+┌────────────────────────────────────────────────────────────────┐
+│   MASTER PRIME CONTRACTOR: HCLTECH (THE BUILDER)                 │
+│   - Runs the "Spec2Parts" Silicon Pipeline with Samsung Foundry  │
+│   - Directs the End-to-End DBP Onboarding & Training (Yrs 1–2)   │
+│   - Operates Tier-4 Core Datacenter Suites & Peltier Cooling     │
+└────────────────────────────────────────────────────────────────┘
+                    ↓
+┌────────────────────────────────────────────────────────────────┐
+│   STRATEGIC SUBCONTRACTOR: INFOSYS (THE SCALER)                  │
+│   - Orchestrates Planetary-Scale Edge Systems for 6.0B DECP-1    │
+│     Terminals (DECoDe Engine)                                   │
+│   - Manages Ingest Engine for 1,024-ch EEG Telemetry &           │
+│     REG_COGNITIVE_COHERENCE Registries                          │
+│   - Directs SD-WAN & SpaceX LEO Satcom Network Centers (Yr 3+)   │
+└────────────────────────────────────────────────────────────────┘
+  </div>
+  <div class="page-marker">Page 7 of 20</div>
+
+  <ol>
+    <li><strong>Mine Brat Private Limited (Exclusive Client SPOC):</strong> Represents the Owner's interest. Holds absolute technical veto, controls the USD 2.07 Billion Seed Capital drawdown matrix, and conducts unannounced audits of silicon yields and user onboarding workflows.</li>
+    <li><strong>HCL Technologies Limited (Master Prime Contractor):</strong> Assumes end-to-end contractual liability for the physical, electrical, and facility layers. During Years 1 and 2, runs the Phase-1 Business Process Onboarding PMO in parallel with chip manufacturing.</li>
+    <li><strong>Infosys Limited (Strategic Subcontractor):</strong> Governs the planetary data, network, and application layers, scaling the software platform from Year 3 onward.</li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="section-title">Section II — Custom Silicon Specifications (DUCP-1 &amp; DECP-1)</h2>
+  <p>Fabricated exclusively on Samsung Foundry's 3nm Gate-All-Around (GAA) Nanosheet process node via the Samsung SAFE™ ecosystem, the silicon layer is split into an orchestration server die and an ultra-low-power edge die.</p>
+
+  <h4>1. DUCP-1 (Delper Unified Cognitive Processor) — Datacenter Orchestration Core</h4>
+  <ul>
+    <li><strong>Physical Profile:</strong> Monolithic die size of ~150 mm² packaged in a 3,600-ball Flip-Chip Ball Grid Array (FCBGA) with high-density organic substrates; copper IHS bound via Indium-solder TIM.</li>
+    <li><strong>Transistor Count:</strong> ~280 Billion.</li>
+    <li><strong>Compute Throughput:</strong> 14,850 INT8 TOPS / 7,425 FP16 TFLOPS at 0.85V nominal core voltage.</li>
+    <li><strong>On-Die Memory:</strong> 2.5 GB Embedded Block SRAM / High-Density eDRAM cache grid with sub-ambient thermoelectric Peltier cooling loop.</li>
+    <li><strong>Bus Interconnect:</strong> 128 physical lanes of CXL 3.1 Switched Interconnect Fabric at 64 GT/s per lane.</li>
+  </ul>
+
+  <h4>2. DECP-1 (Delper Edge Cognitive Processor) — Edge Terminal Companion Chip</h4>
+  <ul>
+    <li><strong>Physical Profile:</strong> ~35 mm² die in an ultra-slim 625-ball WLCSP; 6.0 mm × 6.0 mm × 0.8 mm.</li>
+    <li><strong>Transistor Count:</strong> ~65 Billion.</li>
+    <li><strong>Compute Throughput:</strong> 450 INT8 TOPS / 225 FP16 TFLOPS, adaptive 0.55V–0.75V core voltage.</li>
+    <li><strong>On-Die Memory:</strong> 64 MB high-speed block SRAM.</li>
+    <li><strong>Sensory Capture Bus:</strong> 32 multiplexed digital data lines (EEG_DATA_DIN[0..31]) ingesting 1,024-channel ADC arrays at 24-bit resolution, 2.0 kHz sampling.</li>
+  </ul>
+
+  <h4>3. Shared Enclave: The Level 5 Hardware Execution Guard</h4>
+  <p>Both chips contain a physically isolated security ring tracking the memory-mapped registry <code>REG_COGNITIVE_COHERENCE</code>, fed by dry-electrode EEG arrays. If a worker's Cognitive Load Index drops below a 0.88 threshold, the enclave fires a hardware interrupt that drops the execution bus enable signal within 14 microseconds, cleanly severing the execution pipeline at the silicon level.</p>
+  <div class="page-marker">Page 8 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Section III — Global Data Center Core &amp; Disaster Recovery Networks</h2>
+  <p>The architecture eliminates real estate civil construction timeframes by leasing private, high-density suites within Tier-4 carrier-neutral wholesale colocation facilities, connected via an SD-WAN and optical inter-satellite links across SpaceX Starlink transponders.</p>
+
+  <div class="diagram">
+┌──────────────────────────────────────────────┐
+│        GLOBAL LEOSAT CONSTELLATION MESH        │
+└──────────────────────────────────────────────┘
+     [Ku-Band]   [Ku-Band]   [Ku-Band]
+        ↓            ↓           ↓
+ ┌────────────┐ ┌────────────┐ ┌───────────────────┐
+ │ MUMBAI DC  │↔│ DUBAI DC   │↔│ BENGALURU STANDBY  │
+ │ (45MW Core)│ │ (45MW Core)│ │ (Hejjala-Bidadi DRC)│
+ └────────────┘ └────────────┘ └───────────────────┘
+        \\            │            /
+         ====[ MULTI-PATH SUBSEA DARK-FIBER ]====
+  </div>
+
+  <h4>1. The 9 Core Tier-4 Global Data Center Suites</h4>
+  <p>Each suite consumes a 45MW critical IT load at a design PUE target of ≤1.15:</p>
+  <ol>
+    <li>Ashburn, Virginia, USA — North America East backbone gateway</li>
+    <li>Portland, Oregon, USA — Transpacific marine fiber landing gateway</li>
+    <li>Dublin, Ireland — Transatlantic landing point; optimal ambient cooling</li>
+    <li>Frankfurt, Germany — Continental Europe switching loop center</li>
+    <li>Jurong West, Singapore — Primary Global Active-Active Control Tower node</li>
+    <li>Tokyo, Japan — Asia-Pacific high-density ring coordinator</li>
+    <li>Sydney, Australia — Southern Hemisphere anchor hub</li>
+    <li>Mumbai, India — South Asia Mainland primary node</li>
+    <li>Dubai, UAE — Middle East Interconnect Node (paired with 35 MW tracking solar array)</li>
+  </ol>
+
+  <h4>2. The South Asia Hot-Standby Node: Hejjala-Bidadi DRC (Bengaluru)</h4>
+  <ul>
+    <li><strong>Geological Selection:</strong> Bengaluru-Mysuru highway corridor, stable crystalline rock foundation for seismic protection, nearby high-voltage grid.</li>
+    <li><strong>Infrastructure Footprint:</strong> 22,000 m² total built-up area, 8,000 m² white space housing 2,000 high-density 42U cabinets; 25MW at 1.18 PUE.</li>
+    <li><strong>Failover Metric:</strong> Read-only async replication from Singapore and Mumbai; BGP failover to Hejjala-Bidadi within ≤14 microseconds, targeting 0.0000% data loss.</li>
+  </ul>
+  <div class="page-marker">Page 9 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Section IV — Master Five-Year Integrated Cost &amp; Timeline Envelope</h2>
+  <p>The USD 2.07 Billion Seed Capital is distributed over a 5-year capital expenditure (CapEx) timeline, strictly matching capital consumption to corporate earnings recognition.</p>
+
+  <table>
+    <thead><tr><th>Year</th><th>Focus</th><th>CapEx Drawdown</th></tr></thead>
+    <tbody>
+      <tr><td>Year 1 — Foundation</td><td>Samsung 3nm mask sets, HCLTech ATE code gen</td><td>$500M</td></tr>
+      <tr><td>Year 2 — Matrix Expansion</td><td>Singapore control tower, India DR center, EEG telemetry loop live</td><td>$500M</td></tr>
+      <tr><td>Year 3 — Volume Scale</td><td>150M DECP-1 kiosks live</td><td>$500M</td></tr>
+      <tr><td>Year 4 — Infra Peak</td><td>705 transport hubs live, Hyperledger Fabric mesh</td><td>$500M</td></tr>
+      <tr><td>Year 5 — Global Parity</td><td>2B families enrolled, 1.974T annual units moved</td><td>$70M</td></tr>
+    </tbody>
+  </table>
+
+  <h4>1. Phased Execution Ledger</h4>
+  <ul>
+    <li><strong>Year 1 (USD 500M | 100% CWIP):</strong> Samsung finalizes 3nm GAA mask files; HCLTech builds ATE code scripts at Bengaluru ASL; Mine Brat signs off on GDSII layout clearance. Singapore Holding Co. compliance layer established; onboarding of initial 36 global ad/survey mediation networks begins in dry-run status.</li>
+    <li><strong>Year 2 (USD 500M | Fixed Asset Initialization):</strong> Samsung delivers first 10,000 chip samples; HCLTech screens the 14-microsecond safety execution gate; Infosys fits out the Active-Active Singapore Tower and Hejjala-Bidadi DRC. Initial pilot nodes activated across India and 60 countries; 3-member-per-family KYC framework begins active group ingestion.</li>
+    <li><strong>Year 3 (USD 500M):</strong> High-volume manufacturing of the DECP-1 die at Samsung; Infosys deploys its DECoDe engine to roll out the first 150 million Edge User Terminals / Haptic Pod Nodes globally. First Commercial Revenue Recognition at a baseline throughput rate of USD 0.15243 per minute per active user.</li>
+    <li><strong>Year 4 (USD 500M):</strong> Deployment of the 705 Regional Transport Hub Arrays; HPE builds custom 1U liquid-cooled server enclosures housing 20x Master DUCP-1 dies paired with 100x sandboxed enterprise NPUs. Infosys activates the permissioned Hyperledger Fabric enterprise blockchain matrix, generating a projected USD 1.067 Trillion per annum in supply-chain commissions.</li>
+    <li><strong>Year 5 (USD 70M):</strong> Phased-array transceivers lock beam paths with the overhead SpaceX LEO satellite mesh at 10 Gbps, RTT under 14 milliseconds. Onboarding reaches full target of 2 billion families globally, driving toward a projected USD 5.93 Trillion per annum in Ecosystem Gross Profit.</li>
+  </ul>
+
+  <h4>2. Long-Term Steady-State Annual OpEx</h4>
+  <p>Once fully live, global operating cost scales to a steady-state run-rate of USD 2.39 Billion per annum:</p>
+  <ul>
+    <li>Global Data Center Fleet Utilities: $244.42M p.a.</li>
+    <li>Dark-Fiber Leases &amp; Ground Stations: $135.00M p.a.</li>
+    <li>Hejjala-Bidadi Operational Maintenance: $32.89M p.a.</li>
+    <li>Distributed Edge Node Bandwidth &amp; Upkeep: $1.50B p.a.</li>
+    <li>HCLTech &amp; Infosys Engineering Payroll: $475.00M p.a.</li>
+  </ul>
+  <div class="page-marker">Page 10 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Section V — Regional Human Capital &amp; Staffing Lifecycle</h2>
+  <table>
+    <thead><tr><th>Operational Region</th><th>Engineering Staff Count</th><th>Primary Specialized Skill Sets</th></tr></thead>
+    <tbody>
+      <tr><td>Mumbai Core Suite</td><td>185 Full-Time Engineers</td><td>Marine fiber loop maintenance, high-density BGA diagnostics</td></tr>
+      <tr><td>Dubai Core Suite</td><td>160 Full-Time Engineers</td><td>Solar tracking field sync, high-ambient thermal control</td></tr>
+      <tr><td>Hejjala-Bidadi DRC (Bengaluru Hub)</td><td>110 Full-Time Engineers</td><td>CXL 3.1 bus scheduling, automated failover mechanics</td></tr>
+      <tr><td><strong>Total Cluster Roster</strong></td><td><strong>455 On-Site Professionals</strong></td><td></td></tr>
+    </tbody>
+  </table>
+  <div class="page-marker">Page 11 of 20</div>
+
+  <h4>Core Skill Profiles Mandated</h4>
+  <ul>
+    <li><strong>Silicon &amp; Bus Architecture Specialists:</strong> Embedded firmware, Network-on-Chip (NoC) debugging, hardware sandboxing address lines.</li>
+    <li><strong>High-Speed Network &amp; SATCOM Architects:</strong> SD-WAN routing, BGP failover, phased-array satellite link optimization.</li>
+    <li><strong>Mechanical Cooling Technicians:</strong> Sub-ambient liquid-to-dielectric fluid distribution, industrial Tier-4 PUE chiller maintenance.</li>
+    <li><strong>Cryptographic Systems Auditors:</strong> Hardware Root-of-Trust (RoT) key verification, safety register log monitoring.</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="section-title">Section VI — Total Built-Up Area (BUA) Site Envelope</h2>
+  <p><strong>Total Campus Built-Up Area Allocation: 169,000 m²</strong></p>
+  <ul>
+    <li><strong>Data Center Industrial GFA (115,000 m²):</strong> White space compute halls, electrical switchgear rooms, kinetic rotary flywheel vaults, protected external generator yards.</li>
+    <li><strong>Staff Residential Campus (20,500 m²):</strong> Shielded serviced apartments for rotating shift leads, emergency hot-standby dormitories with separate life-support air filters, medical dispensaries, and industrial kitchens sized for a 14-day facility lockdown.</li>
+    <li><strong>Commercial &amp; Administrative Hubs (33,500 m²):</strong> Hardened NOC/SOC rooms with 24/7 theater telemetry tracking of global space links, cleanroom-grade R&amp;D testing labs with ATE for inspecting incoming DUCP-1 server blades.</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="section-title">Section VII — Tripartite Legal Governance Contract Execution</h2>
+  <div class="clause">
+    <h4>Clause 12.1: Prime Contractor Responsibility &amp; Back-to-Back Liability</h4>
+    <p>HCLTech India ("Prime Contractor") maintains sole, end-to-end contractual accountability to DGHC for the execution of the global program, incorporating all Client-facing performance, uptime, and data integrity metrics as strict back-to-back pass-through obligations binding upon Infosys India ("Subcontractor"). The Subcontractor assumes full operational and financial liability for any breach originating within the Software Orchestration Layer, the Planetary Edge Device Engine (DECoDe), or the Space-Based SD-WAN Routing Mesh.</p>
+  </div>
+  <div class="page-marker">Page 12 of 20</div>
+  <div class="clause">
+    <h4>Clause 12.2: Silicon-to-Software Limitation of Liability (LoL)</h4>
+    <p>Except in cases of gross negligence, willful misconduct, or severe data privacy breaches, the maximum aggregate liability of either Party for any single contract year is capped at 100% of the fees paid or payable to the Subcontractor during the preceding twelve months. Neither Party is liable for indirect or consequential losses, except that liquidated damages assessed against the Prime Contractor for software platform downtime are treated as direct damages pass-through to the Subcontractor.</p>
+  </div>
+  <div class="clause">
+    <h4>Clause 12.3: Fast-Track Failover Indemnity Override</h4>
+    <p>If a critical regional network disconnect occurs, the Subcontractor must guarantee an automated BGP failover to the Hejjala-Bidadi DRC within ≤14 microseconds. If the failover pipeline stalls due to an unhandled software exception or configuration error, the Clause 12.2 liability cap is overridden — the Subcontractor becomes directly liable for liquidated damages up to USD 150 Million per incident, enforced by Mine Brat Private Limited via withholding of equivalent tranches from automated ad-revenue distribution lines.</p>
+  </div>
+
+  <p class="fine-print">Official Regional Compliance Signatures &amp; Procurement Stamp — Document Concluded // Validated by Mine Brat Pvt Ltd SPOC for Immediate Foundry Ingress.</p>
+  <p>To move this verified master plan straight into execution, next steps under consideration include drafting the hardware assembly code scripts for the proprietary <code>D_ENCRYPT</code> and <code>D_POLL_COH</code> instructions inside the DECP-1 local firmware, and generating the first live quarterly cash drawdown request invoice via Mine Brat Private Limited to release initial Phase 1 Samsung 3nm mask tooling funds.</p>
+  <div class="page-marker">Page 13 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Five-Year Integrated Silicon &amp; Cash Flow Ledger</h2>
+  <p>The USD 2.07 Billion seed capital runway is explicitly aligned with the internal cash flow generated by the Delper Business Process (DBP), mapping HCLTech's silicon production stages and Infosys's edge terminal rollouts to the USD 0.15243 per-minute user ad/survey ingress velocity.</p>
+
+  <table>
+    <thead><tr><th>Fiscal Phase</th><th>Infrastructure Focus</th><th>CapEx Drawdown</th><th>Core Cash Flow Ingress</th><th>Accounting Alignment</th></tr></thead>
+    <tbody>
+      <tr><td>Year 1</td><td>Samsung 3nm Mask Sets &amp; HCLTech ATE Code Gen</td><td>$500.00M</td><td>$0.00 (Zero Revenue Phase)</td><td>100% CWIP; net income insulated from R&amp;D drag</td></tr>
+      <tr><td>Year 2</td><td>Singapore Control Tower &amp; Hejjala-Bidadi DRC Setup</td><td>$500.00M</td><td>Pilot Scaling Ingress</td><td>Hardware suites move to Fixed Assets; depreciation begins</td></tr>
+      <tr><td>Year 3</td><td>Mass Production of 150M DECP-1 Edge Kiosks</td><td>$500.00M</td><td>$295.44B / year</td><td>Commercial Break-even; ad/survey platforms go live at $0.15243/min</td></tr>
+      <tr><td>Year 4</td><td>705 Transport Hubs &amp; Hyperledger Fabric Mesh</td><td>$500.00M</td><td>$1.067T / year</td><td>EBITDA Acceleration</td></tr>
+      <tr><td>Year 5</td><td>Planetary Ground-to-Orbit Parity Saturation</td><td>$70.00M</td><td>$5.93T / year</td><td>Peak Capital Return; 2B enrolled families active</td></tr>
+    </tbody>
+  </table>
+  <div class="page-marker">Page 14 of 20</div>
+
+  <h4>Detailed Cash Flow Integration Rules</h4>
+  <p><strong>A. Year-3 Commercial Break-Even Gate (Infosys Deployment):</strong> Cash flow is driven by 3 KYC'd family members viewing ads and completing surveys for 90 hours/month. Once Infosys activates DECoDe across the first 150 million edge terminals, each active family node generates USD 823 per 30-day period, split 30/30/30/10 across user rewards, local platform OpEx, central corporate treasury, and a contingency buffer.</p>
+  <p><strong>B. Year-4 EBITDA Acceleration Gate:</strong> Completion of the 705 Regional Transport Hub Arrays unlocks the Recursive Buyer/Seller Supply Chain; DUCP-1 server blades process high-velocity logistical transactions across 6 recursive layers, collecting 0.5% buy/sell taxes and up to 18% transaction charges per layer, reaching a projected USD 1.067 Trillion per annum by Year 5.</p>
+  <p><strong>C. Non-Cash Tokenomics Guard:</strong> Mine Brat Private Limited enforces that user rewards are paid exclusively as non-cash Delper Tokens redeemable only for groceries and daily necessities on-platform, signed at line-rate by DECP-1 chips and kept within the permissioned Hyperledger Fabric blockchain.</p>
+
+  <p class="fine-print">Note: 5,000 acres allocated for the smart city and Disaster Recovery Facility.</p>
+  <div class="page-marker">Page 15 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Silicon Manufacturing &amp; Packaging Unit Economics</h2>
+  <p>Total manufacturing cost for DUCP-1 is $67.65 million, for DECP-1 is $45.05 billion; HCLTech's initial 5-year prime engagement fee is $945.00 million; Mine Brat's governance retainer is $120.00 million.</p>
+
+  <table>
+    <thead><tr><th>Silicon Parameter</th><th>DUCP-1 (Master Server Die)</th><th>DECP-1 (Edge Companion Die)</th></tr></thead>
+    <tbody>
+      <tr><td>Die Area &amp; Package</td><td>150 mm² (3,600-ball FCBGA)</td><td>35 mm² (625-ball WLCSP)</td></tr>
+      <tr><td>Gross / Net Dies per Wafer</td><td>451 gross / 384 net usable</td><td>1,939 gross / 1,823 net usable</td></tr>
+      <tr><td>Total Production Wafers</td><td>604 wafers (231,928 units)</td><td>3,291,279 wafers (6.0B units)</td></tr>
+      <tr><td>Blended 300mm Wafer Cost</td><td>$16,000 (low-volume, high-perf)</td><td>$11,500 (mass volume discount)</td></tr>
+      <tr><td>Raw Silicon Yield Cost / Die</td><td>$41.67</td><td>$6.31</td></tr>
+      <tr><td>Packaging &amp; ATE Screening / Die</td><td>$250.00 (Indium TIM + Peltier IHS)</td><td>$1.20 (WLCSP wafer-level balling)</td></tr>
+      <tr><td>Total Finished Cost / Die</td><td>$291.67</td><td>$7.51</td></tr>
+      <tr><td>Total Manufacturing Cost</td><td>$67.65 Million</td><td>$45.05 Billion (phased over 21 yrs)</td></tr>
+    </tbody>
+  </table>
+  <p>Of the $45.05 billion total 21-year manufacturing envelope, exactly $1.127 billion is drawn during the 5-year runway to fund pilot runs, all 231,928 DUCP-1 server dies, and the initial 150 million DECP-1 units for Year 3.</p>
+
+  <h4>HCLTech Prime Contractor Costs (5-Year Engagement)</h4>
+  <ul>
+    <li>NRE &amp; Mask Tooling: $350.00M</li>
+    <li>Bengaluru ASL Cleanroom &amp; ATE Testing: $185.00M</li>
+    <li>Phase-1 Business Process Onboarding PMO (Yrs 1–2): $150.00M</li>
+    <li>Tier-4 Data Center &amp; Hejjala-Bidadi Facility Management: $260.00M</li>
+    <li><strong>Total HCLTech 5-Year Prime Cost: $945.00 Million</strong></li>
+  </ul>
+  <div class="page-marker">Page 16 of 20</div>
+
+  <h4>Mine Brat Pvt Limited Client SPOC Governance Costs (5-Year Retainer)</h4>
+  <ul>
+    <li>Independent Silicon Verification &amp; Lab Auditing: $35.00M</li>
+    <li>Milestone Gatekeeping &amp; Capital Call Release: $25.00M</li>
+    <li>Business Compliance &amp; KYC Inspection: $30.00M</li>
+    <li>Executive Program Office, Legal &amp; Retainers: $30.00M</li>
+    <li><strong>Total Mine Brat 5-Year Governance Cost: $120.00 Million</strong></li>
+  </ul>
+
+  <h4>5-Year Capital Allocation Summary Against the $2.07B Seed Runway</h4>
+  <ul>
+    <li>HCLTech Prime Engineering &amp; Data Center Operations: $945.00M</li>
+    <li>Samsung 3nm Tooling, Initial Wafers &amp; Packaging: $480.00M</li>
+    <li>Infosys Software, Satcom SD-WAN &amp; Edge Ingress: $525.00M</li>
+    <li>Mine Brat Pvt Ltd Client Governance &amp; Auditing: $120.00M</li>
+    <li><strong>Total Seed Capital Consumed: $2.07 Billion</strong></li>
+  </ul>
+  <div class="page-marker">Page 17 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Five-Year Integrated Silicon Infrastructure &amp; Cash Flow Ledger</h2>
+  <table>
+    <thead>
+      <tr><th>Operating Metric</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>Year 4</th><th>Year 5</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>CapEx Drawdown</td><td>$500.00M</td><td>$500.00M</td><td>$500.00M</td><td>$500.00M</td><td>$70.00M</td></tr>
+      <tr><td>Fixed Facility Utility OpEx</td><td>$12.00M</td><td>$45.00M</td><td>$212.00M</td><td>$487.42M</td><td>$487.42M</td></tr>
+      <tr><td>Edge SATCOM Bandwidth OpEx</td><td>—</td><td>$15.00M</td><td>$150.00M</td><td>$900.00M</td><td>$1.50B</td></tr>
+      <tr><td>HCLTech Prime Mgmt Fee</td><td>$215.00M</td><td>$240.00M</td><td>$130.00M</td><td>$180.00M</td><td>$180.00M</td></tr>
+      <tr><td>Mine Brat Governance Retainer</td><td>$24.00M</td><td>$24.00M</td><td>$24.00M</td><td>$24.00M</td><td>$24.00M</td></tr>
+      <tr><td>Ecosystem Gross Profit</td><td>$0.00 (pilot)</td><td>—</td><td>$295.44B</td><td>$1.067T</td><td>$5.930T</td></tr>
+      <tr><td>Net Corporate Cash Flow</td><td>-$751.00M</td><td>-$824.00M</td><td>+$294.316B</td><td>+$1.064T</td><td>+$5.926T</td></tr>
+      <tr><td>Balance Sheet Log</td><td>100% CWIP Asset</td><td>Fixed Asset Init</td><td>Linear Depreciation</td><td>EBITDA Scale</td><td>Peak EPS Maturity</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Phased Cash Flow Harmonization &amp; Accounting Rules</h4>
+  <div class="page-marker">Page 18 of 20</div>
+
+  <p><strong>A. Years 1–2 — Capital Absorption &amp; Structural Validation:</strong> Pure capital absorption phases. Mine Brat authorizes capital draws to fund HCLTech's NRE mask tooling, Samsung 3nm GAA printing runs, and early private data suite provisions in Navi Mumbai, Dubai, and Hejjala-Bidadi. All expenditures are capitalized as CWIP, protecting P&amp;L from R&amp;D drag before the first tokenomic clearing event.</p>
+  <p><strong>B. Year 3 — The Conversion Gate &amp; Commercial Inception:</strong> Infosys activates DECoDe across the first 150 million edge terminals, ingesting 1,024-channel EEG metrics into the <code>REG_COGNITIVE_COHERENCE</code> registry. Active users complete ad and survey viewing for 90 hours per family per month, driving an ingress velocity of USD 0.15243 per minute. The resulting USD 295.44 Billion Year-3 gross profit splits 30/30/30/10:</p>
+  <ul>
+    <li><strong>30% User Rewards Pool:</strong> Non-cash Delper Tokens funding the USD 823 per family monthly reward baseline.</li>
+    <li><strong>30% Platform OpEx Reserve:</strong> Escrow pools covering power, satellite bandwidth, and HCLTech facility management.</li>
+    <li><strong>30% Corporate Treasury Yield:</strong> Recognized as corporate cash earnings, neutralizing prior seed investment within 45 days of Year-3 activation.</li>
+    <li><strong>10% Contingency Buffer:</strong> Locked into high-liquidity assets.</li>
+  </ul>
+  <p><strong>C. Years 4–5 — Logistical Scale &amp; Systemic Parity:</strong> HCLTech and HPE complete 705 Regional Transport Hub Arrays (20x Master DUCP-1 dies + 100x sandboxed enterprise NPUs per rack). Chaincode smart contracts on the Hyperledger Fabric matrix execute instant customs releases on IoT delivery confirmation. Collecting 0.5% buy/sell taxes and up to 18% transaction fees per layer expands net cash flow to USD 5.926 Trillion by Year 5.</p>
+  <div class="page-marker">Page 19 of 20</div>
+</section>
+
+<section>
+  <h2 class="section-title">Capital Sufficiency Assessment</h2>
+  <p><strong>No additional capital infusion is required.</strong> The USD 2.07 Billion seed capital runway is presented as mathematically and operationally sufficient to carry the program through to self-sufficiency by Year 3, for the following stated reasons:</p>
+
+  <h4>1. Zero Civil Construction Real Estate Costs</h4>
+  <p>By leasing private, high-density secure suites inside pre-built, carrier-neutral Tier-4 facilities (e.g. Equinix, NTT) rather than constructing new sites, the multi-billion-dollar civil engineering costs of land acquisition and construction are avoided. The USD 2.07 Billion is spent on Samsung 3nm wafers, HPE server hardware, SpaceX satellite bandwidth, and specialized human capital.</p>
+
+  <h4>2. Immediate Cash Inflow in Year 3</h4>
+  <p>The cash runway is projected to cover only the first 24 months of pre-revenue development. By Year 3, Infosys activates DECoDe across 150 million edge terminals; participation in ad and survey mediation tracks ignites an ingress velocity of USD 0.15243 per minute per active user, generating a projected USD 295.44 Billion in Ecosystem Gross Profit in Year 3 alone.</p>
+
+  <h4>3. The Self-Sustaining 30% OpEx Allocation</h4>
+  <p>The automated 30/30/30/10 treasury split funnels USD 88.63 Billion into dedicated operating escrow accounts in Year 3, covering data center utility bills, satellite bandwidth fees, and HCLTech/Infosys management retainers for the remainder of the 21-year roadmap.</p>
+
+  <div class="callout">
+    <strong>⚠ The Only Risk Trigger — Mine Brat Governance:</strong> Mitigated by penalty clauses in the HCLTech and Infosys contracts. The only scenario where capital would run tight is if HCLTech suffers major wafer yield excursions at Samsung Foundry, or if Infosys misses the 14-microsecond failover latency benchmarks, causing Mine Brat to trigger contract freezes. The current phased drawdown model is presented as a resilient buffer against external market capital dependency.
+  </div>
+  <div class="page-marker">Page 20 of 20</div>
+</section>
+
+<footer>
+  <p>Referenced sources:<br>
+  <a href="https://semiconductor.samsung.com/foundry/" target="_blank">semiconductor.samsung.com/foundry</a><br>
+  <a href="https://www.hcltech.com/semiconductor-services-and-solutions" target="_blank">hcltech.com/semiconductor-services-and-solutions</a></p>
+</footer>
+
+</div>
+</body>
+</html>
